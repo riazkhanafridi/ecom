@@ -109,7 +109,7 @@ const login = async (req, res) => {
       { userId: user._id, email: user.email },
       "my-new-secrete-key-riaz-khan",
       {
-        expiresIn: "1h",
+        expiresIn: "5h",
       }
     );
 

@@ -1,8 +1,23 @@
 const { OrderModel, orderSchemaJoi } = require("../models/OrderModel");
 const { ErrorMessage, SuccessMessage } = require("../utils/ResponseMessage");
+const { isValidObjectId } = require("mongoose");
 const { ProductModel } = require("../models/ProductModel");
 const { UserModel } = require("../models/UserModel");
 const { sendMail, invoiceTemplate } = require("../services/common");
+
+const fetchOrdersByUser = async (req, res) => {
+  const { id } = req.user;
+  if (!isValidObjectId(id)) return ErrorMessage(res, 400, "Invalid id");
+
+  try {
+    const orders = await OrderModel.find({ user: id });
+
+    return SuccessMessage(res, "user order retrieve Successfully!", orders);
+  } catch (err) {
+    console.error("Error get user orders :", err);
+    res.status(500).json({ error: "failed to orders " });
+  }
+};
 
 const createOrder = async (req, res) => {
   // console.log("here");
@@ -62,7 +77,37 @@ const createOrder = async (req, res) => {
     return ErrorMessage(res, 400, "Failed to create order.");
   }
 };
+const updateOrder = async (req, res) => {
+  const { id, updateData } = req.body;
+  if (!isValidObjectId(id)) return ErrorMessage(res, 400, "Invalid id");
+  if (!updateData) return ErrorMessage(res, 400, "Invalid Update Data");
+  try {
+    const data = await OrderModel.findByIdAndUpdate(id, {
+      ...updateData,
+    });
+    return SuccessMessage(res, "Updated Successfully!");
+  } catch (error) {
+    console.error("Error updating :", error);
+    res.status(500).json({ error: "failed to update " });
+  }
+};
+const deleteOrder = async (req, res) => {
+  try {
+    const order = await OrderModel.findByIdAndDelete(req.params.id);
+    if (!order) {
+      res.status(400).json({ error: "order not found" });
+    }
+    return SuccessMessage(res, "deleted Successfully!");
+  } catch (error) {
+    console.error("error deleting order", error);
+
+    res.status(500).json({ error: "failed to delete order" });
+  }
+};
 
 module.exports = {
   createOrder,
+  updateOrder,
+  deleteOrder,
+  fetchOrdersByUser,
 };

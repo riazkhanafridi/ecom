@@ -9,12 +9,12 @@ const protect = async (req, res, next) => {
 
     const valid = jwt.verify(token, "my-new-secrete-key-riaz-khan");
 
-    console.log("test", valid.email);
+    // console.log("test", valid.email);
 
     // Assuming `valid` contains `userId` and `email`
     const user = await UserModel.findOne({ email: valid.email });
 
-    console.log("useris", user);
+    // console.log("useris", user);
 
     if (!user) {
       return res.status(401).json({ message: "User not found" });

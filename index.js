@@ -7,14 +7,14 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const brandRoutes = require("./routes/brandRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const cartRoutes = require("./routes/cartRoutes");
-const cookieParser = require("cookie-parser");
+
 
 const app = express();
 const port = process.env.PORT || 8080;
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
-app.use(cookieParser());
+
 
 mongoose
   .connect(process.env.MONGODB_URL, {
